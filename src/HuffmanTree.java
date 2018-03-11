@@ -11,6 +11,7 @@ class Node implements Comparable<Node> {
     public int frequency;
     public Node left;
     public Node right;
+    public String code;
     
     public Node(char letter, int frequency) {
         this.letter = letter;
@@ -66,22 +67,41 @@ public class HuffmanTree {
                 list.add(node);
             }
         }
+        printList(list);
         Collections.sort(list);
+        printList(list);
         
-        printNodes(list);
-        
-        int frequency;
         while (list.size() > 1) {
-        	frequency = list.get(0).frequency + list.get(1).frequency;
+        	int frequency = list.get(0).frequency + list.get(1).frequency;
             Node newNode = new Node('*', frequency, list.get(0), list.get(1));
-            list.remove(0);
-            list.remove(0);
+            list.removeFirst();
+            list.removeFirst();
             list.add(newNode);
             Collections.sort(list);
-            printNodes(list);
+            printList(list);
         }
         return list.getFirst();
     }
+    
+    public static void encoder (Node node, String code) {
+    	if (node == null)
+    		return;
+    	
+    	if (node.letter != '*')
+    		node.code = code;
+    	
+    	encoder(node.left, code + "0");
+    	encoder(node.right, code + "1");
+    }
+    
+    public static void main (String[] args) {
+        Node root = createTree ("testando a arvore de huffman.");
+        System.out.println(printTree(root));
+        encoder(root, "");
+        System.out.println(printMessage(root));
+    }
+    
+    /* ----------------------------------------------------------- */
     
     private static int countOccurences (char[] letters, char c) {
         int occurences = 0;
@@ -93,14 +113,29 @@ public class HuffmanTree {
         return occurences;
     }
     
-    private static void printNodes (LinkedList<Node> list) {
+    private static String printTree(Node node) {
+		if(node == null)
+			return "<>";
+		return "<" + node.letter + ":" +  node.frequency
+			+ printTree(node.left) 
+			+ printTree(node.right)
+			+ ">";
+	}
+
+    private static void printList (LinkedList<Node> list) {
         System.out.println("+--------------------------+");
         for (Node n : list)
             System.out.println(n.letter + ": " + n.frequency);
     }
-    
-    public static void main (String[] args) {
-        Node root = createTree ("Quero testar isso.");
-    }
 
+    private static String printMessage (Node node) {
+    	if(node == null)
+    		return "";
+    	else if (node.letter == '*')
+    		return printMessage(node.left) + printMessage(node.right);
+    	
+    	return node.letter + ": " + node.code + " | " + 
+    			printMessage(node.left) +
+    			printMessage(node.right);
+    }
 }
