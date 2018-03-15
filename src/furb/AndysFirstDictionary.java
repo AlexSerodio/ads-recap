@@ -50,19 +50,28 @@ public class AndysFirstDictionary {
 	 * 
 	 * @param text
 	 */
-	public void getWords(String[] text) {
+	public Set<String> getWords(String[] text) {
 		if (text == null) {
 			throw new NullPointerException("There is no text so Andy can create his dictionary!");
 		} else {
 			Set<String> dictionary = this.createDictionary(text);
 			if (!dictionary.isEmpty()) {
-				Iterator<String> iterator = dictionary.iterator();
-				while (iterator.hasNext()) {
-					System.out.println(iterator.next());
-				}
+				return dictionary;
 			} else {
 				throw new RuntimeException("You gave Andy an empty text! Try again.");
 			}
+		}
+	}
+
+	/**
+	 * Prints words on console.
+	 * 
+	 * @param dictionary
+	 */
+	public void printDictionary(Set<String> dictionary) {
+		Iterator<String> iterator = dictionary.iterator();
+		while (iterator.hasNext()) {
+			System.out.println(iterator.next());
 		}
 	}
 
@@ -72,7 +81,7 @@ public class AndysFirstDictionary {
 	 * @param file
 	 * @return
 	 */
-	public static String[] readFile(File file) {
+	public String[] readFile(File file) {
 
 		if (file == null) {
 			throw new NullPointerException("Please insert a file to Andy's First Dictionary!");
