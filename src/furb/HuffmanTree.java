@@ -14,7 +14,6 @@ class Node implements Comparable<Node> {
     public int frequency;
     public Node left;
     public Node right;
-    public String code;
     
     public Node(char letter, int frequency) {
         this.letter = letter;
@@ -70,9 +69,7 @@ public class HuffmanTree {
                 list.add(node);
             }
         }
-        printList(list);
         Collections.sort(list);
-        printList(list);
         
         while (list.size() > 1) {
         	int frequency = list.get(0).frequency + list.get(1).frequency;
@@ -81,35 +78,53 @@ public class HuffmanTree {
             list.removeFirst();
             list.add(newNode);
             Collections.sort(list);
-            printList(list);
         }
         return list.getFirst();
     }
     
-    public static void encodeMessage (Node node, String code, Map<Character, String> map) {
+    public static String encodeMessage (Node node, String message) {
+    	Map<Character, String> map = new HashMap<>();
+    	
+    	if ((node.left == null) && (node.right == null))
+    		map.put(node.letter, "0");
+    	else
+    		encode(node, "", map);
+    	
+    	String code = "";
+        for (int i = 0 ; i < message.length(); i++)
+            code += map.get(message.charAt(i));
+        
+    	return code;
+    }
+    
+    private static void encode (Node node, String code, Map<Character, String> map) {
     	if (node == null)
     		return;
     	
-    	if (node.letter != '*') {
-    		node.code = code;
-    		map.put(node.letter, node.code);
-    	}
+    	if ((node.left == null) && (node.right == null))
+    		map.put(node.letter, code);
     	
-    	encodeMessage(node.left, code + "0", map);
-    	encodeMessage(node.right, code + "1", map);
+    	encode(node.left, code + "0", map);
+    	encode(node.right, code + "1", map);
     }
     
     public static StringBuilder decodeMessage (Node root, String code) {
     	StringBuilder text = new StringBuilder();
-    	int index = -1;
-    	while (index < code.length()-2) {
-    		index = decode(root, index, code, text);
+    	
+    	if (code.length() == 1) {
+    		text.append(root.letter);
+    		return text;
     	}
+    	
+    	int index = -1;
+    	while (index < code.length()-1)
+    		index = decode(root, index, code, text);
+    	
     	return text;
     }
     
     private static int decode (Node root, int index, String code, StringBuilder text) {
-        if (root == null)
+    	if (root == null)
             return index;
 
         if ((root.left == null) && (root.right == null)) {
@@ -128,23 +143,17 @@ public class HuffmanTree {
     }
     
     public static void main (String[] args) {
-        String message = "testando a arvore de huffman.";
+        String message = "test.";
+        System.out.println("Original message: " + message);
+        
     	Node root = createTree (message);
-        System.out.println(printTree(root));
+        System.out.println("Tree: " + printTree(root));
         
-        Map<Character, String> map = new HashMap<>();
-        encodeMessage(root, "", map);
-        //System.out.println(printCode(root));
-        
-        String code = "";
-        for (int i = 0 ; i < message.length(); i++) {
-            code += map.get(message.charAt(i));
-        }
-
-        System.out.println(code);
+        String code = encodeMessage(root, message);
+        System.out.println("Encoded message: " + code);
         
         StringBuilder result = decodeMessage(root, code);
-        System.out.println(result);
+        System.out.println("Decoded message: " + result);
     }
     
     /* ----------------------------------------------------------- */
@@ -167,43 +176,4 @@ public class HuffmanTree {
 			+ printTree(node.right)
 			+ ">";
 	}
-
-    private static void printList (LinkedList<Node> list) {
-        System.out.println("+--------------------------+");
-        for (Node n : list)
-            System.out.println(n.letter + ": " + n.frequency);
-    }
-
-    private static String printCode (Node node) {
-    	if(node == null)
-    		return "";
-    	else if (node.letter == '*')
-    		return printCode(node.left) + printCode(node.right);
-    	
-    	return node.letter + ": " + node.code + " | " + 
-    			printCode(node.left) +
-    			printCode(node.right);
-    }
-    
-    private static String printCode2 (Node node) {
-    	if(node == null)
-    		return "";
-    	else if (node.letter == '*')
-    		return printCode2(node.left) + printCode2(node.right);
-    	
-    	return node.code + 
-    			printCode2(node.left) +
-    			printCode2(node.right);
-    }
-    
-    private static String printMessage (Node node) {
-    	if(node == null)
-    		return "";
-    	else if (node.letter == '*')
-    		return printMessage(node.left) + printMessage(node.right);
-    	
-    	return node.letter + 
-    			printMessage(node.left) +
-    			printMessage(node.right);
-    }
 }
