@@ -1,6 +1,8 @@
 package furb;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 /**
 *
@@ -84,22 +86,65 @@ public class HuffmanTree {
         return list.getFirst();
     }
     
-    public static void encoder (Node node, String code) {
+    public static void encodeMessage (Node node, String code, Map<Character, String> map) {
     	if (node == null)
     		return;
     	
-    	if (node.letter != '*')
+    	if (node.letter != '*') {
     		node.code = code;
+    		map.put(node.letter, node.code);
+    	}
     	
-    	encoder(node.left, code + "0");
-    	encoder(node.right, code + "1");
+    	encodeMessage(node.left, code + "0", map);
+    	encodeMessage(node.right, code + "1", map);
+    }
+    
+    public static StringBuilder decodeMessage (Node root, String code) {
+    	StringBuilder text = new StringBuilder();
+    	int index = -1;
+    	while (index < code.length()-2) {
+    		index = decode(root, index, code, text);
+    	}
+    	return text;
+    }
+    
+    private static int decode (Node root, int index, String code, StringBuilder text) {
+        if (root == null)
+            return index;
+
+        if ((root.left == null) && (root.right == null)) {
+            text.append(root.letter);
+            return index;
+        }
+
+        index++;
+
+        if (code.charAt(index) == '0')
+            index = decode(root.left, index, code, text);
+        else
+            index = decode(root.right, index, code, text);
+
+        return index;
     }
     
     public static void main (String[] args) {
-        Node root = createTree ("testando a arvore de huffman.");
+        String message = "testando a arvore de huffman.";
+    	Node root = createTree (message);
         System.out.println(printTree(root));
-        encoder(root, "");
-        System.out.println(printMessage(root));
+        
+        Map<Character, String> map = new HashMap<>();
+        encodeMessage(root, "", map);
+        //System.out.println(printCode(root));
+        
+        String code = "";
+        for (int i = 0 ; i < message.length(); i++) {
+            code += map.get(message.charAt(i));
+        }
+
+        System.out.println(code);
+        
+        StringBuilder result = decodeMessage(root, code);
+        System.out.println(result);
     }
     
     /* ----------------------------------------------------------- */
@@ -129,13 +174,35 @@ public class HuffmanTree {
             System.out.println(n.letter + ": " + n.frequency);
     }
 
+    private static String printCode (Node node) {
+    	if(node == null)
+    		return "";
+    	else if (node.letter == '*')
+    		return printCode(node.left) + printCode(node.right);
+    	
+    	return node.letter + ": " + node.code + " | " + 
+    			printCode(node.left) +
+    			printCode(node.right);
+    }
+    
+    private static String printCode2 (Node node) {
+    	if(node == null)
+    		return "";
+    	else if (node.letter == '*')
+    		return printCode2(node.left) + printCode2(node.right);
+    	
+    	return node.code + 
+    			printCode2(node.left) +
+    			printCode2(node.right);
+    }
+    
     private static String printMessage (Node node) {
     	if(node == null)
     		return "";
     	else if (node.letter == '*')
     		return printMessage(node.left) + printMessage(node.right);
     	
-    	return node.letter + ": " + node.code + " | " + 
+    	return node.letter + 
     			printMessage(node.left) +
     			printMessage(node.right);
     }
