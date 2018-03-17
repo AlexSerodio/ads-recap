@@ -3,6 +3,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Stack;
 
 /**
 *
@@ -14,6 +15,8 @@ class Node implements Comparable<Node> {
     public int frequency;
     public Node left;
     public Node right;
+    
+    public Node () {}
     
     public Node(char letter, int frequency) {
         this.letter = letter;
@@ -142,18 +145,63 @@ public class HuffmanTree {
         return index;
     }
     
+    public static Node recreateTree (String tree) {    	
+    	char[] chars = tree.toCharArray();
+    	Stack<Character> stack = new Stack<>();
+    	
+    	for (int i = tree.length()-1; i >= 0; i--)
+    		stack.push(chars[i]);
+    	
+    	Node root = new Node();
+    	return recreateTree(stack, root);
+    }
+    
+    private static Node recreateTree (Stack<Character> stack, Node node) {
+    	char symbol;
+    	symbol = stack.pop();
+    	
+    	if((symbol == '<') && (stack.peek() == '>'))
+			return node;
+    	
+    	if (symbol == '<' || symbol == '>')
+    		return recreateTree (stack, node);
+    	
+    	node = new Node(symbol, -1);
+        node.left = recreateTree (stack, node.left);
+        node.right = recreateTree (stack, node.right);
+        return node;
+    }
+    
     public static void main (String[] args) {
-        String message = "test.";
+        String message = "agora vai.";
         System.out.println("Original message: " + message);
         
+        System.out.println("\n+--------------------------------------+\n");
+        
     	Node root = createTree (message);
-        System.out.println("Tree: " + printTree(root));
+    	String createdTree = printTree(root);
+        System.out.println("Created Tree: " + createdTree);
+        
+        System.out.println("\n+--------------------------------------+\n");
         
         String code = encodeMessage(root, message);
         System.out.println("Encoded message: " + code);
         
+        System.out.println("\n+--------------------------------------+\n");
+        
         StringBuilder result = decodeMessage(root, code);
-        System.out.println("Decoded message: " + result);
+        System.out.println("Decoded message: " + result.toString());
+        
+        System.out.println("\n+--------------------------------------+\n");
+        
+        Node node = recreateTree(printTree(root));
+        String recreatedTree = printTree(node);
+        System.out.println("Recreated Tree: " + recreatedTree);
+        
+        System.out.println("\n+--------------------------------------+\n");
+        
+        System.out.println("Created and recreated tree are equal: " + createdTree.equals(recreatedTree));
+        System.out.println("Original message and decoded message are equal: " + message.equals(result.toString()));
     }
     
     /* ----------------------------------------------------------- */
@@ -168,10 +216,10 @@ public class HuffmanTree {
         return occurences;
     }
     
-    private static String printTree(Node node) {
+    private static String printTree (Node node) {
 		if(node == null)
 			return "<>";
-		return "<" + node.letter + ":" +  node.frequency
+		return "<" + node.letter
 			+ printTree(node.left) 
 			+ printTree(node.right)
 			+ ">";
