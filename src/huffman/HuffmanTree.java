@@ -1,4 +1,4 @@
-package furb;
+package huffman;
 
 import java.io.File;
 import java.io.FileWriter;

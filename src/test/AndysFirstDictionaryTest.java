@@ -6,7 +6,7 @@ import java.util.Set;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import furb.AndysFirstDictionary;
+import andys.AndysFirstDictionary;
 
 public class AndysFirstDictionaryTest {
 
