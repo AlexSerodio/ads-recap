@@ -131,7 +131,7 @@ public class HuffmanTree {
 		return node;
 	}
 
-	private String printTree(Node node) {
+	public String printTree(Node node) {
 		if (node == null)
 			return "<>";
 
