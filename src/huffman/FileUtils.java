@@ -3,6 +3,7 @@ package huffman;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -17,9 +18,10 @@ public class FileUtils {
 	 * @return
 	 */
 	public static boolean createFile(String encodeMessage, String printTree, String fileName) {
+
 		FileWriter writer;
 		try {
-			writer = new FileWriter(new File("encodedFile-" + fileName + ".txt"));
+			writer = new FileWriter(makeFile(fileName));
 			writer.write(encodeMessage + "\n" + printTree);
 			writer.close();
 			return true;
@@ -47,6 +49,21 @@ public class FileUtils {
 		}
 
 		return array;
+	}
+
+	private static String createDirectory(String path, String separator) {
+		File directory = new File(path + separator + "compressedFiles");
+		if (!directory.exists()) {
+			directory.mkdir();
+		}
+
+		return directory.getAbsolutePath();
+	}
+
+	private static File makeFile(String fileName) {
+		String separator = FileSystems.getDefault().getSeparator();
+		String path = createDirectory(System.getProperty("user.dir"), separator);
+		return new File(path + separator + "encodedFile-" + fileName + ".txt");
 	}
 
 }

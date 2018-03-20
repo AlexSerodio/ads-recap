@@ -148,6 +148,8 @@ public class HuffmanTree {
 
 		String encoded = huffman.encodeMessage(root, message);
 
+		FileUtils.createFile(encoded, createdTree, "test");
+
 		StringBuilder decoded = huffman.decodeMessage(root, encoded);
 
 		Node node = huffman.recreateTree(createdTree);
