@@ -1,9 +1,5 @@
 package andys;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
@@ -73,31 +69,6 @@ public class AndysFirstDictionary {
 		while (iterator.hasNext()) {
 			System.out.println(iterator.next());
 		}
-	}
-
-	/**
-	 * Reads a given file.
-	 * 
-	 * @param file
-	 * @return
-	 */
-	public String[] readFile(File file) {
-
-		if (file == null) {
-			throw new NullPointerException("Please insert a file to Andy's First Dictionary!");
-		}
-
-		String[] text = null;
-		try {
-			byte[] arrayBytes = Files.readAllBytes(Paths.get(file.getAbsolutePath()));
-			String content = new String(arrayBytes);
-			text = content.split("\n");
-		} catch (IOException e) {
-			e.getStackTrace();
-		}
-
-		return text;
-
 	}
 
 }

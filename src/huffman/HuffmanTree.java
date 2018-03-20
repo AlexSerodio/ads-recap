@@ -1,69 +1,11 @@
 package huffman;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Stack;
 
-/**
- *
- * @author Nemo
- */
-class Node implements Comparable<Node> {
-
-	public char letter;
-	public int frequency;
-	public Node left;
-	public Node right;
-
-	public Node() {
-	}
-
-	public Node(char letter, int frequency) {
-		this.letter = letter;
-		this.frequency = frequency;
-		this.left = null;
-		this.right = null;
-	}
-
-	public Node(char letter, int frequency, Node left, Node right) {
-		this.letter = letter;
-		this.frequency = frequency;
-		this.left = left;
-		this.right = right;
-	}
-
-	@Override
-	public int compareTo(Node node) {
-		return this.frequency - node.frequency;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-
-		if (obj == null)
-			return false;
-
-		if (getClass() != obj.getClass())
-			return false;
-
-		Node other = (Node) obj;
-		return letter == other.letter;
-	}
-}
-
-/**
- *
- * @author Nemo
- */
 public class HuffmanTree {
 
 	public Node createTree(String message) {
@@ -194,33 +136,6 @@ public class HuffmanTree {
 			return "<>";
 
 		return "<" + node.letter + printTree(node.left) + printTree(node.right) + ">";
-	}
-
-	public boolean createFile(String encodeMessage, String printTree, String fileName) {
-		FileWriter writer;
-		try {
-			writer = new FileWriter(new File("encodedFile-" + fileName + ".txt"));
-			writer.write(encodeMessage + "\n" + printTree);
-			writer.close();
-			return true;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return false;
-	}
-
-	public String[] readFile(File file) {
-		String[] array = null;
-		try {
-			byte[] arrayBytes = Files.readAllBytes(Paths.get(file.getAbsolutePath()));
-			String content = new String(arrayBytes);
-			array = content.split("\n");
-		} catch (IOException e) {
-			e.getStackTrace();
-		}
-
-		return array;
 	}
 
 	public static void main(String[] args) {
