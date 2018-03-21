@@ -1,6 +1,10 @@
 package huffman;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -141,32 +145,59 @@ public class HuffmanTree {
 	public static void main(String[] args) {
 		HuffmanTree huffman = new HuffmanTree();
 
-		String message = "testing the huffman tree.";
+		File directory = new File(FileUtils.getTestFilesPath());
 
-		Node root = huffman.createTree(message);
-		String createdTree = huffman.printTree(root);
+		String[] lines = null;
+		String line = null;
+		Node root = null;
+		String encoded;
+		String createdTree;
+		StringBuilder sb = new StringBuilder("+--------------------------------------+" + "\n");
+		for (File file : directory.listFiles()) {
+			if (file.isFile()) {
+				lines = FileUtils.readFile(file);
+				for (int i = 0; i < lines.length; i++) {
+					line = lines[i];
+					if (line != null && !line.isEmpty()) {
+						String name = file.getName();
+						sb.append("Current file: " + name + "\n");
+						sb.append("File size: " + file.length() + "bytes" + "\n");
+						sb.append("Begin: "
+								+ new SimpleDateFormat("HH:mm:ss.SSS").format(Calendar.getInstance().getTime()) + "\n");
+						root = huffman.createTree(line);
+						createdTree = huffman.printTree(root);
+						encoded = huffman.encodeMessage(root, line);
+						sb.append("End: "
+								+ new SimpleDateFormat("HH:mm:ss.SSS").format(Calendar.getInstance().getTime()) + "\n");
+						// FileUtils.createFile(encoded, createdTree, name);
+					}
 
-		String encoded = huffman.encodeMessage(root, message);
+				}
+			}
 
-		FileUtils.createFile(encoded, createdTree, "test");
+			sb.append("+--------------------------------------+" + "\n");
+		}
 
-		StringBuilder decoded = huffman.decodeMessage(root, encoded);
+		System.out.println(sb.toString());
 
-		Node node = huffman.recreateTree(createdTree);
-		String recreatedTree = huffman.printTree(node);
+		// StringBuilder decoded = huffman.decodeMessage(root, encoded);
+		// Node node = huffman.recreateTree(createdTree);
+		// String recreatedTree = huffman.printTree(node);
 
-		System.out.println("Original message: " + message);
-		System.out.println("+--------------------------------------+");
-		System.out.println("Created Tree: " + createdTree);
-		System.out.println("+--------------------------------------+");
-		System.out.println("Encoded message: " + encoded);
-		System.out.println("+--------------------------------------+");
-		System.out.println("Decoded message: " + decoded.toString());
-		System.out.println("+--------------------------------------+");
-		System.out.println("Recreated Tree: " + recreatedTree);
-		System.out.println("+--------------------------------------+");
-		System.out.println("Created and recreated tree are equal: " + createdTree.equals(recreatedTree));
-		System.out.println("+--------------------------------------+");
-		System.out.println("Original message and decoded message are equal: " + message.equals(decoded.toString()));
+		// System.out.println("Original message: " + message);
+		// System.out.println("+--------------------------------------+");
+		// System.out.println("Created Tree: " + createdTree);
+		// System.out.println("+--------------------------------------+");
+		// System.out.println("Encoded message: " + encoded);
+		// System.out.println("+--------------------------------------+");
+		// System.out.println("Decoded message: " + decoded.toString());
+		// System.out.println("+--------------------------------------+");
+		// System.out.println("Recreated Tree: " + recreatedTree);
+		// System.out.println("+--------------------------------------+");
+		// System.out.println("Created and recreated tree are equal: " +
+		// createdTree.equals(recreatedTree));
+		// System.out.println("+--------------------------------------+");
+		// System.out.println("Original message and decoded message are equal: " +
+		// message.equals(decoded.toString()));
 	}
 }

@@ -9,6 +9,9 @@ import java.nio.file.Paths;
 
 public class FileUtils {
 
+	private static final String SEPARATOR = FileSystems.getDefault().getSeparator();
+	private static final String CURRENTDIR_PATH = System.getProperty("user.dir");
+
 	/**
 	 * Creates file with encoded text based on Huffman coding.
 	 * 
@@ -60,10 +63,13 @@ public class FileUtils {
 		return directory.getAbsolutePath();
 	}
 
+	public static String getTestFilesPath() {
+		return CURRENTDIR_PATH + SEPARATOR + "testfiles";
+	}
+
 	private static File makeFile(String fileName) {
-		String separator = FileSystems.getDefault().getSeparator();
-		String path = createDirectory(System.getProperty("user.dir"), separator);
-		return new File(path + separator + "encodedFile-" + fileName + ".txt");
+		String path = createDirectory(CURRENTDIR_PATH, SEPARATOR);
+		return new File(path + SEPARATOR + "encodedFile-" + fileName + ".txt");
 	}
 
 }
