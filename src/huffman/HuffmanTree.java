@@ -1,14 +1,12 @@
 package huffman;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Stack;
+import java.util.concurrent.TimeUnit;
 
 public class HuffmanTree {
 
@@ -142,7 +140,7 @@ public class HuffmanTree {
 		return "<" + node.letter + printTree(node.left) + printTree(node.right) + ">";
 	}
 
-	public static void main(String[] args) {
+	private static void testFilesEncoding() {
 		HuffmanTree huffman = new HuffmanTree();
 
 		File directory = new File(FileUtils.getTestFilesPath());
@@ -150,8 +148,11 @@ public class HuffmanTree {
 		String[] lines = null;
 		String line = null;
 		Node root = null;
+		Node node = null;
 		String encoded;
 		String createdTree;
+		String recreatedTree;
+		StringBuilder decoded;
 		StringBuilder sb = new StringBuilder("+--------------------------------------+" + "\n");
 		for (File file : directory.listFiles()) {
 			if (file.isFile()) {
@@ -161,15 +162,40 @@ public class HuffmanTree {
 					if (line != null && !line.isEmpty()) {
 						String name = file.getName();
 						sb.append("Current file: " + name + "\n");
-						sb.append("File size: " + file.length() + "bytes" + "\n");
-						sb.append("Begin: "
-								+ new SimpleDateFormat("HH:mm:ss.SSS").format(Calendar.getInstance().getTime()) + "\n");
+						sb.append("File size: " + file.length() + " bytes" + "\n");
+
 						root = huffman.createTree(line);
+						sb.append("Original text: " + line + "\n");
+
 						createdTree = huffman.printTree(root);
+
+						sb.append("Tree: " + createdTree + "\n");
+
+						long start = System.currentTimeMillis();
 						encoded = huffman.encodeMessage(root, line);
-						sb.append("End: "
-								+ new SimpleDateFormat("HH:mm:ss.SSS").format(Calendar.getInstance().getTime()) + "\n");
-						// FileUtils.createFile(encoded, createdTree, name);
+						sb.append("Encoded text: " + encoded + "\n");
+						long end = System.currentTimeMillis();
+
+						long millis = end - start;
+
+						sb.append("Execution time: "
+								+ String.format("%02d:%02d:%02d.%d", TimeUnit.MILLISECONDS.toHours(millis),
+										TimeUnit.MILLISECONDS.toMinutes(millis)
+												- TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
+										TimeUnit.MILLISECONDS.toSeconds(millis)
+												- TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)),
+										TimeUnit.MILLISECONDS.toMillis(millis)
+												- TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(millis)))
+								+ "\n");
+
+						FileUtils.createFile(encoded, createdTree, name);
+
+						decoded = huffman.decodeMessage(root, encoded);
+						sb.append("Decoded text: " + decoded.toString() + "\n");
+						node = huffman.recreateTree(createdTree);
+						recreatedTree = huffman.printTree(node);
+						sb.append("Recreated tree: " + recreatedTree + "\n");
+						sb.append("Are original and decoded equal: " + line.equals(decoded.toString()) + "\n");
 					}
 
 				}
@@ -180,24 +206,10 @@ public class HuffmanTree {
 
 		System.out.println(sb.toString());
 
-		// StringBuilder decoded = huffman.decodeMessage(root, encoded);
-		// Node node = huffman.recreateTree(createdTree);
-		// String recreatedTree = huffman.printTree(node);
+	}
 
-		// System.out.println("Original message: " + message);
-		// System.out.println("+--------------------------------------+");
-		// System.out.println("Created Tree: " + createdTree);
-		// System.out.println("+--------------------------------------+");
-		// System.out.println("Encoded message: " + encoded);
-		// System.out.println("+--------------------------------------+");
-		// System.out.println("Decoded message: " + decoded.toString());
-		// System.out.println("+--------------------------------------+");
-		// System.out.println("Recreated Tree: " + recreatedTree);
-		// System.out.println("+--------------------------------------+");
-		// System.out.println("Created and recreated tree are equal: " +
-		// createdTree.equals(recreatedTree));
-		// System.out.println("+--------------------------------------+");
-		// System.out.println("Original message and decoded message are equal: " +
-		// message.equals(decoded.toString()));
+	public static void main(String[] args) {
+
+		testFilesEncoding();
 	}
 }
