@@ -1,6 +1,7 @@
 package huffman;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -138,8 +139,8 @@ public class HuffmanTree {
 			return "<>";
 
 		return "<" + node.letter + printTree(node.left) + printTree(node.right) + ">";
-	}
-
+	}	
+	
 	private static void testFilesEncoding() {
 		HuffmanTree huffman = new HuffmanTree();
 
@@ -209,7 +210,45 @@ public class HuffmanTree {
 	}
 
 	public static void main(String[] args) {
-
-		testFilesEncoding();
+		//testFilesEncoding();
+		binary();
+	}
+	
+	private static void binary () {
+		HuffmanTree huffman = new HuffmanTree();
+	
+		// creates tree and encode message
+		String message = "testing the huffman tree.";
+		Node no = huffman.createTree(message);
+		String encoded = huffman.encodeMessage(no, message);
+		String originalTree = huffman.printTree(no);
+		
+		System.out.println("Original message: " + message);
+		System.out.println("Original tree: " + originalTree);
+		System.out.println("Encoded message: " + encoded);		
+		
+		// save in binary file
+		FileUtils.createBinaryFile(encoded, originalTree, "result.out");
+		
+		// read tree and encoded message from file
+		String[] result = FileUtils.readBinaryFile("result.out");
+		String newTree = result[1];
+		String newCode = result[0];
+		
+		System.out.println("Recovered tree: " + newTree);
+		System.out.println("Recovered code: " + newCode);
+		
+		// recreates tree from file and decode message
+		Node newRoot = huffman.recreateTree(newTree);
+		StringBuilder decoded = huffman.decodeMessage(newRoot, newCode);
+		
+		System.out.println("Recreated tree: " + huffman.printTree(newRoot));
+		System.out.println("Decoded message: " + decoded.toString());
+		
+		System.out.println("Codes are equal: " + encoded.equals(newCode));
+		System.out.println("Trees are equal: " + originalTree.equals(newTree));
+		System.out.println("Messages are equal: " + message.equals(decoded.toString()));
+		
+		System.out.println("Done");
 	}
 }
