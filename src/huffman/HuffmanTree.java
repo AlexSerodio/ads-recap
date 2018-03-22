@@ -145,8 +145,7 @@ public class HuffmanTree {
 
 		File directory = new File(FileUtils.getTestFilesPath());
 
-		String[] lines = null;
-		String line = null;
+		String content = null;
 		Node root = null;
 		Node node = null;
 		String encoded;
@@ -156,48 +155,46 @@ public class HuffmanTree {
 		StringBuilder sb = new StringBuilder("+--------------------------------------+" + "\n");
 		for (File file : directory.listFiles()) {
 			if (file.isFile()) {
-				lines = FileUtils.readFile(file);
-				for (int i = 0; i < lines.length; i++) {
-					line = lines[i];
-					if (line != null && !line.isEmpty()) {
-						String name = file.getName();
-						sb.append("Current file: " + name + "\n");
-						sb.append("File size: " + file.length() + " bytes" + "\n");
 
-						root = huffman.createTree(line);
-						sb.append("Original text: " + line + "\n");
+				content = FileUtils.readAllFile(file);
+				if (content != null && !content.isEmpty()) {
+					String name = file.getName();
+					sb.append("Current file: " + name + "\n");
+					sb.append("File size: " + file.length() + " bytes" + "\n");
 
-						createdTree = huffman.printTree(root);
+					root = huffman.createTree(content);
+					sb.append("Original text: " + content + "\n");
 
-						sb.append("Tree: " + createdTree + "\n");
+					createdTree = huffman.printTree(root);
 
-						long start = System.currentTimeMillis();
-						encoded = huffman.encodeMessage(root, line);
-						sb.append("Encoded text: " + encoded + "\n");
-						long end = System.currentTimeMillis();
+					sb.append("Tree: " + createdTree + "\n");
 
-						long millis = end - start;
+					long start = System.currentTimeMillis();
+					encoded = huffman.encodeMessage(root, content);
+					sb.append("Encoded text: " + encoded + "\n");
+					long end = System.currentTimeMillis();
 
-						sb.append("Execution time: "
-								+ String.format("%02d:%02d:%02d.%d", TimeUnit.MILLISECONDS.toHours(millis),
-										TimeUnit.MILLISECONDS.toMinutes(millis)
-												- TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
-										TimeUnit.MILLISECONDS.toSeconds(millis)
-												- TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)),
-										TimeUnit.MILLISECONDS.toMillis(millis)
-												- TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(millis)))
-								+ "\n");
+					long millis = end - start;
 
-						FileUtils.createFile(encoded, createdTree, name);
+					sb.append("Execution time: "
+							+ String.format("%02d:%02d:%02d.%d", TimeUnit.MILLISECONDS.toHours(millis),
+									TimeUnit.MILLISECONDS.toMinutes(millis)
+											- TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
+									TimeUnit.MILLISECONDS.toSeconds(millis)
+											- TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)),
+									TimeUnit.MILLISECONDS.toMillis(millis)
+											- TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(millis)))
+							+ "\n");
 
-						decoded = huffman.decodeMessage(root, encoded);
-						sb.append("Decoded text: " + decoded.toString() + "\n");
-						node = huffman.recreateTree(createdTree);
-						recreatedTree = huffman.printTree(node);
-						sb.append("Recreated tree: " + recreatedTree + "\n");
-						sb.append("Are original and decoded equal: " + line.equals(decoded.toString()) + "\n");
-					}
+					FileUtils.createFile(encoded, createdTree, name);
 
+					// decoded = huffman.decodeMessage(root, encoded);
+					// sb.append("Decoded text: " + decoded.toString() + "\n");
+					// node = huffman.recreateTree(createdTree);
+					// recreatedTree = huffman.printTree(node);
+					// sb.append("Recreated tree: " + recreatedTree + "\n");
+					// sb.append("Are original and decoded equal: " +
+					// content.equals(decoded.toString()) + "\n");
 				}
 			}
 
@@ -208,8 +205,54 @@ public class HuffmanTree {
 
 	}
 
+	private static void testFilesDecoded() {
+
+		HuffmanTree huffman = new HuffmanTree();
+		Node root = null;
+		File directory = new File(FileUtils.getEncodedFilesPath());
+		String[] lines;
+		String line;
+		StringBuilder decoded;
+		StringBuilder sb = new StringBuilder("+--------------------------------------+" + "\n");
+		for (File file : directory.listFiles()) {
+			if (file.isFile()) {
+				lines = FileUtils.readFile(file);
+				line = lines[0];
+				if (line != null && !line.isEmpty()) {
+					String name = file.getName();
+					sb.append("Current file: " + name + "\n");
+					sb.append("File size: " + file.length() + " bytes" + "\n");
+
+					root = huffman.recreateTree(lines[1]);
+					long start = System.currentTimeMillis();
+					decoded = huffman.decodeMessage(root, line);
+					sb.append("Decoded text: " + decoded + "\n");
+					long end = System.currentTimeMillis();
+
+					long millis = end - start;
+
+					sb.append("Execution time: "
+							+ String.format("%02d:%02d:%02d.%d", TimeUnit.MILLISECONDS.toHours(millis),
+									TimeUnit.MILLISECONDS.toMinutes(millis)
+											- TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
+									TimeUnit.MILLISECONDS.toSeconds(millis)
+											- TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)),
+									TimeUnit.MILLISECONDS.toMillis(millis)
+											- TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(millis)))
+							+ "\n");
+
+				}
+			}
+
+			sb.append("+--------------------------------------+" + "\n");
+		}
+
+		System.out.println(sb.toString());
+	}
+
 	public static void main(String[] args) {
 
 		testFilesEncoding();
+		// testFilesDecoded();
 	}
 }
