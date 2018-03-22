@@ -93,7 +93,7 @@ public class FileUtils {
 	public static boolean createBinaryFile(String encodeMessage, String printTree, String fileName) {
 		byte[] bytes = stringToByte(encodeMessage);
 		try {
-			FileOutputStream fos = new FileOutputStream(/*makeFile(fileName)*/new File(fileName));
+			FileOutputStream fos = new FileOutputStream(new File(fileName));
 			fos.write(bytes);
 			fos.write('\n');
 			fos.write(printTree.getBytes());
@@ -128,6 +128,7 @@ public class FileUtils {
 				index++;
 				bit = 0;
 			}
+			
 			if (code.charAt(i) == '1')
 				values[index-1] += (byte)Math.pow(2, bit);
 		}

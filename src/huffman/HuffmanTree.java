@@ -1,7 +1,6 @@
 package huffman;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -141,6 +140,10 @@ public class HuffmanTree {
 		return "<" + node.letter + printTree(node.left) + printTree(node.right) + ">";
 	}	
 	
+	/***
+	 * Reads all example files, builds its trees, 
+	 * encodes its messages and save it in a new file.
+	 */
 	private static void testFilesEncoding() {
 		HuffmanTree huffman = new HuffmanTree();
 
@@ -148,11 +151,8 @@ public class HuffmanTree {
 
 		String content = null;
 		Node root = null;
-		Node node = null;
 		String encoded;
 		String createdTree;
-		String recreatedTree;
-		StringBuilder decoded;
 		StringBuilder sb = new StringBuilder("+--------------------------------------+" + "\n");
 		for (File file : directory.listFiles()) {
 			if (file.isFile()) {
@@ -164,7 +164,7 @@ public class HuffmanTree {
 					sb.append("File size: " + file.length() + " bytes" + "\n");
 
 					root = huffman.createTree(content);
-					sb.append("Original text: " + content + "\n");
+					//sb.append("Original text: " + content + "\n");
 
 					createdTree = huffman.printTree(root);
 
@@ -172,7 +172,7 @@ public class HuffmanTree {
 
 					long start = System.currentTimeMillis();
 					encoded = huffman.encodeMessage(root, content);
-					sb.append("Encoded text: " + encoded + "\n");
+					//sb.append("Encoded text: " + encoded + "\n");
 					long end = System.currentTimeMillis();
 
 					long millis = end - start;
@@ -188,24 +188,17 @@ public class HuffmanTree {
 							+ "\n");
 
 					FileUtils.createFile(encoded, createdTree, name);
-
-					// decoded = huffman.decodeMessage(root, encoded);
-					// sb.append("Decoded text: " + decoded.toString() + "\n");
-					// node = huffman.recreateTree(createdTree);
-					// recreatedTree = huffman.printTree(node);
-					// sb.append("Recreated tree: " + recreatedTree + "\n");
-					// sb.append("Are original and decoded equal: " +
-					// content.equals(decoded.toString()) + "\n");
 				}
 			}
-
 			sb.append("+--------------------------------------+" + "\n");
 		}
-
 		System.out.println(sb.toString());
-
 	}
 
+	/***
+	 * Reads all previously generated files, rebuilds its trees, 
+	 * and decodes the messages.
+	 */
 	private static void testFilesDecoded() {
 
 		HuffmanTree huffman = new HuffmanTree();
@@ -244,30 +237,29 @@ public class HuffmanTree {
 
 				}
 			}
-
 			sb.append("+--------------------------------------+" + "\n");
 		}
-
 		System.out.println(sb.toString());
 	}
-
-	public static void main(String[] args) {
-		//testFilesEncoding();
-		binary();
-	}
 	
-	private static void binary () {
+	/***
+	 * Reads the 49.in file, encodes the message in binary, saves it, 
+	 * retrieves data from file and decodes the message.
+	 * This method works only for the 49.in file. 
+	 */
+	private static void testBinary49 () {
 		HuffmanTree huffman = new HuffmanTree();
 	
+		// get file message
+		String fileName = "49.in";
+		File file = new File(FileUtils.getTestFilesPath() + "/" + fileName);
+		String[] s = FileUtils.readFile(file);
+		String message = s[0];
+		
 		// creates tree and encode message
-		String message = "testing the huffman tree.";
 		Node no = huffman.createTree(message);
 		String encoded = huffman.encodeMessage(no, message);
 		String originalTree = huffman.printTree(no);
-		
-		System.out.println("Original message: " + message);
-		System.out.println("Original tree: " + originalTree);
-		System.out.println("Encoded message: " + encoded);		
 		
 		// save in binary file
 		FileUtils.createBinaryFile(encoded, originalTree, "result.out");
@@ -284,6 +276,10 @@ public class HuffmanTree {
 		Node newRoot = huffman.recreateTree(newTree);
 		StringBuilder decoded = huffman.decodeMessage(newRoot, newCode);
 		
+		System.out.println("Original message: " + message);
+		System.out.println("Original tree: " + originalTree);
+		System.out.println("Encoded message: " + encoded);		
+		
 		System.out.println("Recreated tree: " + huffman.printTree(newRoot));
 		System.out.println("Decoded message: " + decoded.toString());
 		
@@ -291,6 +287,12 @@ public class HuffmanTree {
 		System.out.println("Trees are equal: " + originalTree.equals(newTree));
 		System.out.println("Messages are equal: " + message.equals(decoded.toString()));
 		
-		System.out.println("Done");
+		System.out.println("Done.");
+	}
+	
+	public static void main(String[] args) {
+		testFilesEncoding();
+		//testFilesDecoded();
+		//testBinary49();
 	}
 }
