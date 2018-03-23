@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 public class AndysFirstDictionary {
 
-	private static final Pattern UNWANTED_SYMBOLS = Pattern.compile("[^a-zA-Z0-9]");
+	private static final Pattern UNWANTED_SYMBOLS = Pattern.compile("[^a-zA-Z0-9-]");
 
 	/**
 	 * Creates a dictionary (Set<String>) to add to all the words.
@@ -24,6 +24,10 @@ public class AndysFirstDictionary {
 		String word = "";
 		for (int i = 0; i < lines.length; i++) {
 			line = lines[i];
+
+			line = line.replaceAll("\n", "");
+			line = line.replaceAll("\t", "");
+
 			if (line != null && !line.isEmpty()) {
 				words = line.split("\\s+");
 				for (int j = 0; j < words.length; j++) {

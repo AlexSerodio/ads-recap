@@ -133,16 +133,22 @@ public class HuffmanTree {
 		return node;
 	}
 
+	/**
+	 * Get tree in text notation.
+	 * 
+	 * @param node
+	 * @return
+	 */
 	public String printTree(Node node) {
 		if (node == null)
 			return "<>";
 
 		return "<" + node.letter + printTree(node.left) + printTree(node.right) + ">";
-	}	
-	
+	}
+
 	/***
-	 * Reads all example files, builds its trees, 
-	 * encodes its messages and save it in a new file.
+	 * Reads all example files, builds its trees, encodes its messages and save it
+	 * in a new file.
 	 */
 	private static void testFilesEncoding() {
 		HuffmanTree huffman = new HuffmanTree();
@@ -164,7 +170,7 @@ public class HuffmanTree {
 					sb.append("File size: " + file.length() + " bytes" + "\n");
 
 					root = huffman.createTree(content);
-					//sb.append("Original text: " + content + "\n");
+					// sb.append("Original text: " + content + "\n");
 
 					createdTree = huffman.printTree(root);
 
@@ -172,7 +178,7 @@ public class HuffmanTree {
 
 					long start = System.currentTimeMillis();
 					encoded = huffman.encodeMessage(root, content);
-					//sb.append("Encoded text: " + encoded + "\n");
+					// sb.append("Encoded text: " + encoded + "\n");
 					long end = System.currentTimeMillis();
 
 					long millis = end - start;
@@ -196,8 +202,8 @@ public class HuffmanTree {
 	}
 
 	/***
-	 * Reads all previously generated files, rebuilds its trees, 
-	 * and decodes the messages.
+	 * Reads all previously generated files, rebuilds its trees, and decodes the
+	 * messages.
 	 */
 	private static void testFilesDecoded() {
 
@@ -239,60 +245,67 @@ public class HuffmanTree {
 			}
 			sb.append("+--------------------------------------+" + "\n");
 		}
+
 		System.out.println(sb.toString());
+		// FileUtils.createFile(sb.toString(), "output.txt");
 	}
-	
+
 	/***
-	 * Reads the 49.in file, encodes the message in binary, saves it, 
-	 * retrieves data from file and decodes the message.
-	 * This method works only for the 49.in file. 
+	 * Reads the 49.in file, encodes the message in binary, saves it, retrieves data
+	 * from file and decodes the message. This method works only for the 49.in file.
 	 */
-	private static void testBinary49 () {
+	private static void testBinary49() {
 		HuffmanTree huffman = new HuffmanTree();
-	
+
 		// get file message
 		String fileName = "49.in";
 		File file = new File(FileUtils.getTestFilesPath() + "/" + fileName);
 		String[] s = FileUtils.readFile(file);
 		String message = s[0];
-		
+
 		// creates tree and encode message
 		Node no = huffman.createTree(message);
 		String encoded = huffman.encodeMessage(no, message);
 		String originalTree = huffman.printTree(no);
-		
+
 		// save in binary file
 		FileUtils.createBinaryFile(encoded, originalTree, "result.out");
-		
+
 		// read tree and encoded message from file
 		String[] result = FileUtils.readBinaryFile("result.out");
 		String newTree = result[1];
 		String newCode = result[0];
-		
+
 		System.out.println("Recovered tree: " + newTree);
 		System.out.println("Recovered code: " + newCode);
-		
+
 		// recreates tree from file and decode message
 		Node newRoot = huffman.recreateTree(newTree);
 		StringBuilder decoded = huffman.decodeMessage(newRoot, newCode);
-		
+
 		System.out.println("Original message: " + message);
 		System.out.println("Original tree: " + originalTree);
-		System.out.println("Encoded message: " + encoded);		
-		
+		System.out.println("Encoded message: " + encoded);
+
 		System.out.println("Recreated tree: " + huffman.printTree(newRoot));
 		System.out.println("Decoded message: " + decoded.toString());
-		
+
 		System.out.println("Codes are equal: " + encoded.equals(newCode));
 		System.out.println("Trees are equal: " + originalTree.equals(newTree));
 		System.out.println("Messages are equal: " + message.equals(decoded.toString()));
-		
+
 		System.out.println("Done.");
 	}
-	
+
 	public static void main(String[] args) {
+
+		// Encoding test
 		testFilesEncoding();
-		//testFilesDecoded();
-		//testBinary49();
+
+		// Decoding test
+		// testFilesDecoded();
+
+		// Binary atempt
+		// testBinary49();
 	}
 }

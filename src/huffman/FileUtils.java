@@ -38,6 +38,28 @@ public class FileUtils {
 	}
 
 	/**
+	 * Creates file with a given text.
+	 * 
+	 * @param text
+	 * @param fileName
+	 * @return
+	 */
+	public static boolean createFile(String text, String fileName) {
+
+		FileWriter writer;
+		try {
+			writer = new FileWriter(makeFile(fileName));
+			writer.write(text);
+			writer.close();
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return false;
+	}
+
+	/**
 	 * Reads a given file.
 	 * 
 	 * @param file
@@ -89,7 +111,7 @@ public class FileUtils {
 		String path = createDirectory(CURRENTDIR_PATH, SEPARATOR);
 		return new File(path + SEPARATOR + fileName);
 	}
-	
+
 	public static boolean createBinaryFile(String encodeMessage, String printTree, String fileName) {
 		byte[] bytes = stringToByte(encodeMessage);
 		try {
@@ -104,7 +126,7 @@ public class FileUtils {
 		}
 		return true;
 	}
-	
+
 	public static String[] readBinaryFile(String fileName) {
 		String[] array = null;
 		try {
@@ -118,32 +140,32 @@ public class FileUtils {
 		return array;
 	}
 
-	public static byte[] stringToByte (String code) {
+	public static byte[] stringToByte(String code) {
 		byte[] values = new byte[code.length()];
 		int index = 1;
 		byte bit = 0;
 		int i;
-		for (i = 0; i < code.length(); i++, bit++) {			
+		for (i = 0; i < code.length(); i++, bit++) {
 			if ((bit == 8) && (i != 0)) {
 				index++;
 				bit = 0;
 			}
-			
+
 			if (code.charAt(i) == '1')
-				values[index-1] += (byte)Math.pow(2, bit);
+				values[index - 1] += (byte) Math.pow(2, bit);
 		}
-		byte[] result = Arrays.copyOfRange(values, 0, index+1);
+		byte[] result = Arrays.copyOfRange(values, 0, index + 1);
 		result[index] = (byte) (8 - bit);
 		return result;
 	}
-	
-	public static String byteToString (byte[] code) {
+
+	public static String byteToString(byte[] code) {
 		String result = "";
-		for (int i = 0; i < code.length-1; i++) {
+		for (int i = 0; i < code.length - 1; i++) {
 			String temp = String.format("%8s", Integer.toBinaryString(code[i] & 0xFF)).replace(' ', '0');
 			result += new StringBuilder(temp).reverse().toString();
 		}
-		int end = result.length() - code[code.length-1];
+		int end = result.length() - code[code.length - 1];
 		return result.substring(0, end);
 	}
 }
